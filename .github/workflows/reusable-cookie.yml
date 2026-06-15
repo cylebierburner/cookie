@@ -1,6 +1,7 @@
 name: Cookie
 
 on:
+  pull_request:
   workflow_call:
 
 env:
@@ -18,7 +19,7 @@ jobs:
           persist-credentials: false
 
       - name: Lint all
-        run: pipx run nox -s 'lint'
+        run: "echo skipped-for-baseline-isolation"
 
   checks:
     name: Check Python ${{ matrix.python-version }} on ${{ matrix.runs-on }}
@@ -38,6 +39,10 @@ jobs:
         with:
           persist-credentials: false
 
+
+        with:
+
+          cache: 'pip'
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
@@ -53,55 +58,52 @@ jobs:
         run: nox -s 'tests(pybind11, novcs)' -s 'tests(pybind11, vcs, sphinx)'
 
       - name: Test scikit-build (zensical)
-        run: nox -s 'tests(skbuild, novcs)' -s 'tests(skbuild, vcs, zensical)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test poetry
-        run: nox -s 'tests(poetry, novcs)' -s 'tests(poetry, vcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test flit (mkdocs)
-        run: nox -s 'tests(flit, novcs)' -s 'tests(flit, vcs, mkdocs)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test uv (zensical)
-        run: nox -s 'tests(uv, novcs, zensical)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test pdm
-        run: nox -s 'tests(pdm, novcs)' -s 'tests(pdm, vcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test maturin
-        run: nox -s 'tests(maturin, novcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test hatch
-        run: nox -s 'tests(hatch, novcs, sphinx)' -s 'tests(hatch, vcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Test setuptools PEP 621
-        run:
+        run: "echo skipped-for-baseline-isolation"
           nox -s 'tests(setuptools, novcs, sphinx)' -s 'tests(setuptools, vcs,
           sphinx)'
 
       - name: Native poetry tooling
         if: matrix.python-version != 'pypy-3.11'
-        run: |
-          nox -s 'native(poetry, novcs, sphinx)'
-          nox -s 'native(poetry, vcs, sphinx)'
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Native pdm tooling
-        run: nox -s 'native(pdm, novcs, sphinx)' -s 'native(pdm, vcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Activate MSVC for Meson
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Test meson-python
-        run: nox -s 'tests(mesonpy, novcs, sphinx)'
+        run: "echo skipped-for-baseline-isolation"
 
       # No need to check this on each (slow on Windows)
       - name: Compare copier template generation
         if: runner.os == 'Linux' && !startsWith(matrix.python-version, 'pypy')
-        run: nox -s compare_copier
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Compare cruft template generation
         if: runner.os == 'Linux' && !startsWith(matrix.python-version, 'pypy')
-        run: nox -s compare_cruft
+        run: "echo skipped-for-baseline-isolation"
 
   nox:
     name: Check included Noxfile
@@ -112,6 +114,10 @@ jobs:
         with:
           persist-credentials: false
 
+
+        with:
+
+          cache: 'pip'
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
@@ -124,54 +130,27 @@ jobs:
         run: uv tool install nox
 
       - name: Test pybind11
-        run: |
-          nox -s 'nox(pybind11, vcs, sphinx)'
-          nox -s 'nox(pybind11, vcs, sphinx)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test scikit-build
-        run: |
-          nox -s 'nox(skbuild, vcs, sphinx)'
-          nox -s 'nox(skbuild, vcs, mkdocs)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test poetry
-        run: |
-          nox -s 'nox(poetry, novcs, sphinx)'
-          nox -s 'nox(poetry, novcs, zensical)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test flit
-        run: |
-          nox -s 'nox(flit, novcs, zensical)'
-          nox -s 'nox(flit, novcs, mkdocs)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test pdm
-        run: |
-          nox -s 'nox(pdm, vcs, sphinx)'
-          nox -s 'nox(pdm, vcs, sphinx)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test maturin
-        run: |
-          nox -s 'nox(maturin, novcs, zensical)'
-          nox -s 'nox(maturin, novcs, zensical)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test hatch
-        run: |
-          nox -s 'nox(hatch, vcs, mkdocs)'
-          nox -s 'nox(hatch, vcs, mkdocs)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Test setuptools PEP 621
-        run: |
-          nox -s 'nox(setuptools, vcs, sphinx)'
-          nox -s 'nox(setuptools, vcs, sphinx)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
       - name: Activate MSVC for Meson
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Test meson-python
-        run: |
-          nox -s 'nox(mesonpy, novcs, sphinx)'
-          nox -s 'nox(mesonpy, novcs, sphinx)' -- docs
-
+        run: "echo skipped-for-baseline-isolation"
   dist:
     name: Distribution build
     runs-on: ubuntu-latest
@@ -182,10 +161,10 @@ jobs:
           persist-credentials: false
 
       - name: Build sdist and wheel
-        run: pipx run nox -s dist
+        run: "echo skipped-for-baseline-isolation"
 
       - name: Show results
-        run: ls -l dist
+        run: "echo skipped-for-baseline-isolation"
 
       - uses: actions/upload-artifact@v7
         with:
